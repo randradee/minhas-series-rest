@@ -3,9 +3,12 @@ const app = express();
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const bodyParser = require("body-parser");
-const User = require("./models/user");
+const jwt = require("jsonwebtoken");
+const jwtSecret = "abc123abc123abc123";
+
 const PORT = process.env.PORT || 3000;
 const mongo = process.env.MONGO || "mongodb://localhost/minhas-series-rest";
+const User = require("./models/user");
 
 //rotas
 const series = require("./routes/series");
@@ -30,10 +33,17 @@ app.post("/auth", async (req, res) => {
         const userDB = await User.findOne({ username: user.username });
         if (userDB) {
             if (userDB.password === user.password) {
-                res.send({
-                    success: true,
-                    message: "Usuário autenticado com sucesso",
-                    token: "",
+                const payload = {
+                    id: userDB.id,
+                    username: userDB.username,
+                    roles: userDB.roles,
+                };
+                jwt.sign(payload, jwtSecret, (err, token) => {
+                    res.send({
+                        success: true,
+                        message: "Usuário autenticado com sucesso",
+                        token: token,
+                    });
                 });
             } else {
                 res.send({ success: false, message: "Credenciais incorretas" });
