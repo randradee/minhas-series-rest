@@ -47,7 +47,10 @@ router.put("/:id", async (req, res) => {
     console.log(serie);
     try {
         await serie.save();
-        res.send(serie);
+        res.send({
+            success: true,
+            message: `Serie com id ${req.params.id} atualizada com sucesso`,
+        });
     } catch (e) {
         res.send({ success: false, errors: Object.keys(e.errors) });
     }
