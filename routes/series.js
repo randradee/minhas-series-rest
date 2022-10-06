@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        await Serie.remove({ _id: req.params.id });
+        await Serie.deleteOne({ _id: req.params.id });
         res.send({
             success: true,
             message: `Serie com id ${req.params.id} deletada com sucesso`,
